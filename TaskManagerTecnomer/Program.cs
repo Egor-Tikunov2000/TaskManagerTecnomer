@@ -23,14 +23,14 @@ namespace TaskManager
     class Program
     {
         private static string connectionString = "Host = localhost; Port = 5432; Username = postgres; Password = s5!sz52x; Database = TaskManager";
-        private static Timer _timer;
+        private static System.Timers.Timer _timer;
         private static readonly object logLock = new object();
 
         static async Task Main(string[] args)
         {
             // Настройка таймера на 5 минут (300000 миллисекунд)
-            _timer = new Timer(300000);
-            _timer.Elapsed += async (sender, e) => await CheckCompletedTasks(); ;
+            _timer = new System.Timers.Timer(300000);
+            _timer.Elapsed += async (sender, e) => await CheckCompletedTasks();
             _timer.AutoReset = true;
             _timer.Enabled = true;
 
@@ -122,7 +122,7 @@ namespace TaskManager
             }
         }
 
-        private static async Task CheckCompletedTasks(object sender, ElapsedEventArgs e)
+        private static async Task CheckCompletedTasks()
         {
             var completedTasks = await ExecuteQuery("SELECT * FROM tasks WHERE status = '1'");
             if (completedTasks.Count > 0)
@@ -130,7 +130,7 @@ namespace TaskManager
                 Console.WriteLine("Найдены выполненные задачи:");
                 foreach (var task in completedTasks)
                 {
-                    Console.WriteLine($"ID: {task.Id}, Название: {task.Title}");
+                    Console.WriteLine($"ID: {task.Id}, Название: {task.Title}, ");
                 }
 
                 foreach (var task in completedTasks)
@@ -146,7 +146,7 @@ namespace TaskManager
             var tasks = new List<TaskModels>();
             using (var connection = new NpgsqlConnection(connectionString))
             {
-                connection.OpenAsync();
+                await connection.OpenAsync();
                 using (var command = new NpgsqlCommand(query, connection))
                 using (var reader = await command.ExecuteReaderAsync())
                 {
