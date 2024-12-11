@@ -88,6 +88,7 @@ namespace TaskManager
             {
                 Console.WriteLine($"ID: {task.Id}, Название: {task.Title}, Статус: {task.Status},  Дата создания: {task.datecreation}");
             }
+            Console.WriteLine("Задачи просмотрены");
         }
 
         private static async Task UpdateTaskStatus()
